@@ -58,8 +58,10 @@ function createRandomOrder() {
       title: item.title,
       quantity: item.quantity,
       priceSet: {
-        amount: item.price.toString(),
-        currencyCode: "USD", // 你可以根据需要调整货币类型
+        shopMoney: {
+          amount: "74.99",  // 金额应该是字符串类型，符合 API 的要求
+          currencyCode: "EUR"
+        }
       },
     })),
     shippingAddress: {
