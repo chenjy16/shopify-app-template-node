@@ -34,9 +34,6 @@ export default async function orderCreator(
       await client.request(CREATE_ORDER_MUTATION, {
         variables: {
           order,
-          options: {
-            // 可选参数，例如设置订单的付款状态、发货状态等
-          },
         },
       });
     }
@@ -84,7 +81,7 @@ function createRandomOrder() {
       country: "Canada",
       zip: "Z9Z 9Z9"
     },
-    "appliedDiscount": {
+    appliedDiscount: {
       description: "damaged",
       value: 5.0,
       amount: 5.0,
