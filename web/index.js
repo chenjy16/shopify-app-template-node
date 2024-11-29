@@ -72,6 +72,25 @@ app.post("/api/products", async (_req, res) => {
 });
 
 
+app.get("/api/orders/count", async (_req, res) => {
+  const client = new shopify.api.clients.Graphql({
+    session: res.locals.shopify.session,
+  });
+
+  const countData = await client.request(`
+    query shopifyOrderCount {
+      ordersCount {
+              count
+            }
+      }
+  `);
+  res.status(200).send({ count: countData.data.ordersCount.count });
+});
+
+
+
+
+
 app.post("/api/orders", async (_req, res) => {
   let status = 200;
   let error = null;
