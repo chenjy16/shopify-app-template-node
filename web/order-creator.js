@@ -58,6 +58,17 @@ function createRandomOrder() {
       title: item.title,
       quantity: item.quantity,
       originalUnitPrice: 14.99,
+      appliedDiscount: {
+        description: "wholesale",
+        value: 5.0,
+        amount: 3.74,
+        valueType: "PERCENTAGE",
+        title: "Fancy",
+      },
+      weight: {
+        value: 1,
+        unit: "KILOGRAMS",
+      },
     })),
     shippingAddress: {
       address1: "123 Main St",
@@ -65,6 +76,20 @@ function createRandomOrder() {
       province: "Ontario",
       country: "Canada",
       zip: "A1A 1A1"
+    },
+    billingAddress: {
+      address1: "456 Main St",
+      city: "Toronto",
+      province: "Ontario",
+      country: "Canada",
+      zip: "Z9Z 9Z9"
+    },
+    "appliedDiscount": {
+      description: "damaged",
+      value: 5.0,
+      amount: 5.0,
+      valueType: "FIXED_AMOUNT",
+      title: "Custom"
     },
     email: "johndoe@example.com",
   };
