@@ -13,13 +13,13 @@ const LINE_ITEMS = [
 ];
 
 const CREATE_ORDER_MUTATION = `
-  mutation orderCreate($order: OrderCreateOrderInput!, $options: OrderCreateOptionsInput) {
-    orderCreate(order: $order, options: $options) {
-      order {
-        id
+  mutation draftOrderCreate($input: DraftOrderInput!) {
+        draftOrderCreate(input: $input) {
+          draftOrder {
+            id
+          }
+        }
       }
-    }
-  }
 `;
 
 export default async function orderCreator(
@@ -57,23 +57,15 @@ function createRandomOrder() {
     lineItems: LINE_ITEMS.map((item) => ({
       title: item.title,
       quantity: item.quantity,
-      priceSet: {
-        shopMoney: {
-          amount: "74.99",  // 金额应该是字符串类型，符合 API 的要求
-          currencyCode: "EUR"
-        }
-      },
+      originalUnitPrice: 14.99,
     })),
     shippingAddress: {
-      firstName: "John",
-      lastName: "Doe",
       address1: "123 Main St",
-      city: "Anytown",
+      city: "Waterloo",
       province: "Ontario",
       country: "Canada",
-      zip: "12345",
+      zip: "A1A 1A1"
     },
     email: "johndoe@example.com",
-    financialStatus: "AUTHORIZED", // 订单的付款状态
   };
 }
