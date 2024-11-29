@@ -13,33 +13,10 @@ const LINE_ITEMS = [
 ];
 
 const CREATE_ORDER_MUTATION = `
-  mutation orderCreate($order: OrderCreateInput!, $options: OrderCreateOptionsInput) {
+  mutation orderCreate($order: OrderCreateOrderInput!, $options: OrderCreateOptionsInput) {
     orderCreate(order: $order, options: $options) {
-      userErrors {
-        field
-        message
-      }
       order {
         id
-        totalTaxSet {
-          shopMoney {
-            amount
-            currencyCode
-          }
-        }
-        lineItems(first: 5) {
-          nodes {
-            id
-            title
-            quantity
-            priceSet {
-              shopMoney {
-                amount
-                currencyCode
-              }
-            }
-          }
-        }
       }
     }
   }
