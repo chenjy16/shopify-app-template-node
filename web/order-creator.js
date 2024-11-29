@@ -67,20 +67,6 @@ function createRandomOrder() {
         unit: "KILOGRAMS",
       },
     })),
-    shippingAddress: {
-      address1: "123 Main St",
-      city: "Waterloo",
-      province: "Ontario",
-      country: "Canada",
-      zip: "A1A 1A1"
-    },
-    billingAddress: {
-      address1: "456 Main St",
-      city: "Toronto",
-      province: "Ontario",
-      country: "Canada",
-      zip: "Z9Z 9Z9"
-    },
     appliedDiscount: {
       description: "damaged",
       value: 5.0,
@@ -88,6 +74,5 @@ function createRandomOrder() {
       valueType: "FIXED_AMOUNT",
       title: "Custom"
     },
-    email: "johndoe@example.com",
   };
 }
