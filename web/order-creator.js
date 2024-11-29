@@ -67,12 +67,5 @@ function createRandomOrder() {
         unit: "KILOGRAMS",
       },
     })),
-    appliedDiscount: {
-      description: "damaged",
-      value: 5.0,
-      amount: 5.0,
-      valueType: "FIXED_AMOUNT",
-      title: "Custom"
-    },
   };
 }
