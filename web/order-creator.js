@@ -30,10 +30,10 @@ export default async function orderCreator(
 
   try {
     for (let i = 0; i < count; i++) {
-      const order = createRandomOrder();
+      const input = createRandomOrder();
       await client.request(CREATE_ORDER_MUTATION, {
         variables: {
-          order,
+          input,
         },
       });
     }
