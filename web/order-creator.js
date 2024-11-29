@@ -57,7 +57,7 @@ function createRandomOrder() {
     lineItems: LINE_ITEMS.map((item) => ({
       title: item.title,
       quantity: item.quantity,
-      price: {
+      priceSet: {
         amount: item.price.toString(),
         currencyCode: "USD", // 你可以根据需要调整货币类型
       },
@@ -73,6 +73,5 @@ function createRandomOrder() {
     },
     email: "johndoe@example.com",
     financialStatus: "AUTHORIZED", // 订单的付款状态
-    fulfillmentStatus: "UNFULFILLED", // 发货状态
   };
 }
