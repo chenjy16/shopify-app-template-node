@@ -6,7 +6,9 @@ import serveStatic from "serve-static";
 
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
+import orderCreator from "./order-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
+
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -68,6 +70,23 @@ app.post("/api/products", async (_req, res) => {
   }
   res.status(status).send({ success: status === 200, error });
 });
+
+
+app.post("/api/orders", async (_req, res) => {
+  let status = 200;
+  let error = null;
+
+  try {
+    await orderCreator(res.locals.shopify.session);
+  } catch (e) {
+    console.log(`Failed to process orders/create: ${e.message}`);
+    status = 500;
+    error = e.message;
+  }
+  res.status(status).send({ success: status === 200, error });
+});
+
+
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
