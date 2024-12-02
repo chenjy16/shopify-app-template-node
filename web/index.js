@@ -164,7 +164,7 @@ app.get('/api/store/themes/main', async (req, res) => {
 
 
 
-    export const GET_FIRST_PUBLISHED_PRODUCT_QUERY = gql`
+    const GET_FIRST_PUBLISHED_PRODUCT_QUERY = gql`
       query GetFirstPublishedProduct {
         products(first: 1, query: "published_status:published") {
           edges {
