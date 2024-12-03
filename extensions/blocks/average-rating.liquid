@@ -1,0 +1,49 @@
+{% assign avg_rating = block.settings.product.metafields.reviews.rating.value.rating | plus: 0 %}
+
+{% if avg_rating > 0 %}
+<div class="prapp-average-block" style="padding: {{ block.settings.padding_y }}px {{ block.settings.padding_x }}px;" data-product-id="{{ block.settings.product.id }}">
+  <h4>{{ "blocks.average-rating.heading" | t }}</h4>
+  {% render "star-rating", rating: avg_rating, fill: block.settings.stars_fill_color, size: block.settings.star_size %}
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:blocks.average-rating.name",
+  "templates": ["product"],
+  "target": "section",
+  "stylesheet": "star-rating.css",
+  "settings": [
+    {
+      "id": "stars_fill_color",
+      "type": "color",
+      "label": "t:blocks.average-rating.settings.stars_fill_color.label",
+      "default": "#000000"
+    },
+    {
+      "id": "star_size",
+      "type": "number",
+      "label": "t:blocks.average-rating.settings.star_size.label",
+      "default": 24
+    },
+    {
+      "id": "padding_x",
+      "type": "number",
+      "label": "t:blocks.average-rating.settings.padding_x.label",
+      "default": 0
+    },
+    {
+      "id": "padding_y",
+      "type": "number",
+      "label": "t:blocks.average-rating.settings.padding_y.label",
+      "default": 0
+    },
+    {
+      "id": "product",
+      "type": "product",
+      "label": "t:blocks.average-rating.settings.product.label",
+      "autofill": true
+    }
+  ]
+}
+{% endschema %}
