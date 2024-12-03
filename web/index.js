@@ -135,13 +135,7 @@ app.get('/api/store/themes/main', async (req, res) => {
         }
       }
     `;
-    const assetsResponse = await client.query({ data: assetsQuery });
-    const assets = assetsResponse.body.data.theme.files.nodes;
 
-    // 3. Fetch template JSON files and filter for app block templates
-    const templateJSONFiles = assets.filter(file =>
-      APP_BLOCK_TEMPLATES.some(template => file.body.content.includes(`${template}.json`))
-    );
 
 
 
