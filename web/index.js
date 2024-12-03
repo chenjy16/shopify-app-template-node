@@ -136,14 +136,31 @@ app.get('/api/store/themes/main', async (req, res) => {
       }
     `;
     const assetsResponse = await client.query({ data: assetsQuery });
-
-    console.error("assetsResponse:"+assetsResponse);
     const assets = assetsResponse.body.data.theme.files.nodes;
 
     // 3. Fetch template JSON files and filter for app block templates
     const templateJSONFiles = assets.filter(file =>
       APP_BLOCK_TEMPLATES.some(template => file.body.content.includes(`${template}.json`))
     );
+
+    // 4. Fetch template JSON asset contents (if necessary)
+    const templateJSONAssetContents = await Promise.all(
+      templateJSONFiles.map(async file => {
+        const assetQuery = `
+          query {
+            theme(id: "${publishedTheme.id}") {
+              asset(key: "${file.body.content}") {
+                key
+                value
+              }
+            }
+          }
+        `;
+        const assetResponse = await client.query({ data: assetQuery });
+        return assetResponse.body.data.theme.asset;
+      })
+    );
+
 
 
     // 7. Fetch the first published product (for editor URL)
