@@ -122,7 +122,7 @@ app.get('/api/store/themes/main', async (req, res) => {
     // 2. Fetch assets for the published theme (assets query)
     const assetsQuery = `
       query {
-        theme(id: "gid://shopify/OnlineStoreTheme/${publishedTheme.id}") {
+        theme(id: "${publishedTheme.id}") {
           files(filenames: ["assets/index.js"], first: 1) {
             nodes {
               body {
@@ -138,6 +138,12 @@ app.get('/api/store/themes/main', async (req, res) => {
     const assetsResponse = await client.query({ data: assetsQuery });
 
     console.error("assetsResponse:"+assetsResponse);
+    const assets = assetsResponse.body.data.theme.files.nodes;
+
+    // 3. Fetch template JSON files and filter for app block templates
+    const templateJSONFiles = assets.filter(file =>
+      APP_BLOCK_TEMPLATES.some(template => file.body.content.includes(`${template}.json`))
+    );
 
 
     // 7. Fetch the first published product (for editor URL)
