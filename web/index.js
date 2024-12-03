@@ -143,65 +143,12 @@ app.get('/api/store/themes/main', async (req, res) => {
       APP_BLOCK_TEMPLATES.some(template => file.body.content.includes(`${template}.json`))
     );
 
-    // 4. Fetch template JSON asset contents (if necessary)
-    const templateJSONAssetContents = await Promise.all(
-      templateJSONFiles.map(async file => {
-        const assetQuery = `
-          query {
-            theme(id: "gid://shopify/Theme/${publishedTheme.id}") {
-              asset(key: "${file.body.content}") {
-                key
-                value
-              }
-            }
-          }
-        `;
-        const assetResponse = await client.query({ data: assetQuery });
-        return assetResponse.body.data.theme.asset;
-      })
-    );
 
-    // 5. Get the main sections of the template
-    const templateMainSections = templateJSONAssetContents
-      .map(asset => {
-        const json = JSON.parse(asset.value);
-        const main = json.sections.main && json.sections.main.type;
-        return assets.find(file => file.body.content.includes(`sections/${main}.liquid`));
-      })
-      .filter(value => value);
-
-    // 6. Check for App Blocks in the sections
-    const sectionsWithAppBlock = (
-      await Promise.all(
-        templateMainSections.map(async file => {
-          let acceptsAppBlock = false;
-          const sectionQuery = `
-            query {
-              theme(id: "gid://shopify/Theme/${publishedTheme.id}") {
-                asset(key: "${file.body.content}") {
-                  value
-                }
-              }
-            }
-          `;
-          const sectionResponse = await client.query({ data: sectionQuery });
-          const sectionAsset = sectionResponse.body.data.theme.asset;
-          const match = sectionAsset.value.match(/\{\%\s+schema\s+\%\}([\s\S]*?)\{\%\s+endschema\s+\%\}/m);
-          const schema = match && JSON.parse(match[1]);
-
-          if (schema && schema.blocks) {
-            acceptsAppBlock = schema.blocks.some(b => b.type === "@app");
-          }
-
-          return acceptsAppBlock ? file : null;
-        })
-      )
-    ).filter(value => value);
 
     // 7. Fetch the first published product (for editor URL)
     const GET_FIRST_PUBLISHED_PRODUCT_QUERY = `
       query {
-        products(first: 1, query: "published_status:published") {
+        products(first: 1, query: "product_publication_status:published") {
           edges {
             node {
               id
@@ -220,28 +167,20 @@ app.get('/api/store/themes/main', async (req, res) => {
       return res.status(404).send({ error: "No product found." });
     }
 
-    const editorUrl = `https://${res.locals.shopify.session.shop}/admin/themes/${publishedTheme.id}/editor?previewPath=${encodeURIComponent(`/products/${product.handle}`)}`;
+    const editorUrl = ``;
 
     // 8. Determine support for App Blocks and Sections Everywhere
-    const supportsSe = templateJSONFiles.length > 0;
-    const supportsAppBlocks = supportsSe && sectionsWithAppBlock.length > 0;
+    const supportsSe = false;
+    const supportsAppBlocks = false;
 
     // 9. Return the response
     res.status(200).send({
       theme: publishedTheme,
       supportsSe,
       supportsAppBlocks,
-      containsAverageRatingAppBlock: containsAppBlock(
-        templateJSONAssetContents[0]?.value,
-        "average-rating",
-        process.env.THEME_APP_EXTENSION_UUID
-      ),
-      containsProductReviewsAppBlock: containsAppBlock(
-        templateJSONAssetContents[0]?.value,
-        "product-reviews",
-        process.env.THEME_APP_EXTENSION_UUID
-      ),
-      editorUrl,
+      containsAverageRatingAppBlock: null,
+      containsProductReviewsAppBlock: null,
+      editorUrl
     });
   } catch (error) {
     console.error("Error processing request:", error);
