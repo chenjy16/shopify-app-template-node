@@ -135,8 +135,9 @@ app.get('/api/store/themes/main', async (req, res) => {
         }
       }
     `;
+    const assetsResponse = await client.query({ data: assetsQuery });
 
-
+    console.error("assetsResponse:"+assetsResponse);
 
 
     // 7. Fetch the first published product (for editor URL)
