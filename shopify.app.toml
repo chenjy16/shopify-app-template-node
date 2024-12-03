@@ -1,4 +1,4 @@
 # This file stores configurations for your Shopify app.
 name = "ShopPilot"
 handle = "shoppilot"
-scopes = "write_products,write_orders,write_draft_orders"
+scopes = "write_products,write_orders,write_draft_orders,read_themes"

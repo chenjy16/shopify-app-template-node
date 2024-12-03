@@ -113,7 +113,7 @@ app.get('/api/store/themes/main', async (req, res) => {
     `;
     const themesResponse = await client.query({ data: themesQuery });
     const themes = themesResponse.body.data.themes.edges.map(edge => edge.node);
-    const publishedTheme = themes.find(theme => theme.role === "main");
+    const publishedTheme = themes.find(theme => theme.role === "MAIN");
 
     if (!publishedTheme) {
       return res.status(404).send({ error: "No published theme found." });
