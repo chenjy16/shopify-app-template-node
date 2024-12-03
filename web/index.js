@@ -94,12 +94,12 @@ app.get('/api/store/themes/main', async (req, res) => {
     session: res.locals.shopify.session,
   });
 
-  const APP_BLOCK_TEMPLATES = ["product"];
+  const APP_BLOCK_TEMPLATES = ["product"];  // 可以根据需求修改这些模板
 
   try {
-    // Fetch themes using GraphQL Admin API
+    // 1. Fetch themes using GraphQL Admin API
     const themesQuery = `
-      {
+      query {
         themes(first: 10) {
           edges {
             node {
@@ -119,14 +119,16 @@ app.get('/api/store/themes/main', async (req, res) => {
       return res.status(404).send({ error: "No published theme found." });
     }
 
-    // Fetch assets for the published theme
+    // 2. Fetch assets for the published theme (assets query)
     const assetsQuery = `
-      {
-        theme(id: "gid://shopify/Theme/${publishedTheme.id}") {
-          assets(first: 100) {
-            edges {
-              node {
-                key
+      query {
+        theme(id: "gid://shopify/OnlineStoreTheme/${publishedTheme.id}") {
+          files(filenames: ["assets/index.js"], first: 1) {
+            nodes {
+              body {
+                ... on OnlineStoreThemeFileBodyText {
+                  content
+                }
               }
             }
           }
@@ -134,19 +136,20 @@ app.get('/api/store/themes/main', async (req, res) => {
       }
     `;
     const assetsResponse = await client.query({ data: assetsQuery });
-    const assets = assetsResponse.body.data.theme.assets.edges.map(edge => edge.node);
+    const assets = assetsResponse.body.data.theme.files.nodes;
 
+    // 3. Fetch template JSON files and filter for app block templates
     const templateJSONFiles = assets.filter(file =>
-      APP_BLOCK_TEMPLATES.some(template => file.key === `templates/${template}.json`)
+      APP_BLOCK_TEMPLATES.some(template => file.body.content.includes(`${template}.json`))
     );
 
-    // Fetch template JSON asset contents
+    // 4. Fetch template JSON asset contents (if necessary)
     const templateJSONAssetContents = await Promise.all(
       templateJSONFiles.map(async file => {
         const assetQuery = `
-          {
+          query {
             theme(id: "gid://shopify/Theme/${publishedTheme.id}") {
-              asset(key: "${file.key}") {
+              asset(key: "${file.body.content}") {
                 key
                 value
               }
@@ -158,24 +161,24 @@ app.get('/api/store/themes/main', async (req, res) => {
       })
     );
 
-    // Get the main sections of the template
+    // 5. Get the main sections of the template
     const templateMainSections = templateJSONAssetContents
       .map(asset => {
         const json = JSON.parse(asset.value);
         const main = json.sections.main && json.sections.main.type;
-        return assets.find(file => file.key === `sections/${main}.liquid`);
+        return assets.find(file => file.body.content.includes(`sections/${main}.liquid`));
       })
       .filter(value => value);
 
-    // Check for App Blocks in the sections
+    // 6. Check for App Blocks in the sections
     const sectionsWithAppBlock = (
       await Promise.all(
         templateMainSections.map(async file => {
           let acceptsAppBlock = false;
           const sectionQuery = `
-            {
+            query {
               theme(id: "gid://shopify/Theme/${publishedTheme.id}") {
-                asset(key: "${file.key}") {
+                asset(key: "${file.body.content}") {
                   value
                 }
               }
@@ -195,9 +198,9 @@ app.get('/api/store/themes/main', async (req, res) => {
       )
     ).filter(value => value);
 
-    // Fetch the first published product
+    // 7. Fetch the first published product (for editor URL)
     const GET_FIRST_PUBLISHED_PRODUCT_QUERY = `
-      query GetFirstPublishedProduct {
+      query {
         products(first: 1, query: "published_status:published") {
           edges {
             node {
@@ -219,9 +222,11 @@ app.get('/api/store/themes/main', async (req, res) => {
 
     const editorUrl = `https://${res.locals.shopify.session.shop}/admin/themes/${publishedTheme.id}/editor?previewPath=${encodeURIComponent(`/products/${product.handle}`)}`;
 
+    // 8. Determine support for App Blocks and Sections Everywhere
     const supportsSe = templateJSONFiles.length > 0;
     const supportsAppBlocks = supportsSe && sectionsWithAppBlock.length > 0;
 
+    // 9. Return the response
     res.status(200).send({
       theme: publishedTheme,
       supportsSe,
@@ -243,6 +248,7 @@ app.get('/api/store/themes/main', async (req, res) => {
     res.status(500).send({ error: "Internal server error" });
   }
 });
+
 
 
 
