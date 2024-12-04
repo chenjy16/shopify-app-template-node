@@ -3,8 +3,8 @@ import shopify from "./shopify.js";
 
 // GraphQL 查询语句
 const ProductQuery = `
-  query GetProducts($query: String) {
-    products(first: 10, query: $query) {
+  query GetProducts() {
+    products(first: 10) {
       edges {
         node {
           id
@@ -22,11 +22,7 @@ export const fetchProducts = async (session, query = "") => {
   const queryString = query.trim() === "" ? "" : query;
 
   try {
-    const response = await client.request(ProductQuery, {
-      variables: {
-        query: queryString,  // 传递修改后的查询条件
-      },
-    });
+    const response = await client.request(ProductQuery);
 
     // 检查 response 是否存在以及是否有 products.edges
     if (!response || !response.products || !response.products.edges) {
