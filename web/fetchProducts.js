@@ -43,13 +43,7 @@ export const fetchProducts = async (session, afterCursor = null) => {
       title: node.title,
       handle: node.handle,
     }));
-
-    // 返回产品数据和分页信息
-    return {
-      products,
-      pageInfo: productsData.pageInfo,
-      nextCursor: productsData.edges.length > 0 ? productsData.edges[productsData.edges.length - 1].cursor : null,
-    };
+    return products;
   } catch (error) {
     if (error instanceof GraphqlQueryError) {
       console.error("GraphQL query error:", error.response.errors);
