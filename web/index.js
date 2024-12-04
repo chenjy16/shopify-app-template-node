@@ -10,6 +10,7 @@ import orderCreator from "./order-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
 import {containsAppBlock} from "./frontend/utils/utilities.js";
 import fetchProductById from "./fetchProductById.js";
+import {fetchProducts} from "./fetchProducts.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -94,7 +95,7 @@ app.post("/api/productlist", async (req, res) => {
   const session = req.session; // 获取 session 对象
 
   try {
-    // 调用 fetchProducts 函数获取产品数据
+    // 调用 fetchProducts 函数获取产品数据ß
     const products = await fetchProducts(session, query);
 
     // 返回成功的响应
