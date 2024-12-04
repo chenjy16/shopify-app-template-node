@@ -2,7 +2,7 @@ import { GraphqlQueryError } from "@shopify/shopify-api";
 import shopify from "./shopify.js";
 
 export const fetchProducts = async (session, afterCursor = null) => {
-  const client = new shopify.clients.Graphql({ session });
+  const client = new shopify.api.clients.Graphql({ session });
 
   // GraphQL 查询语句，支持分页
   const query = `
