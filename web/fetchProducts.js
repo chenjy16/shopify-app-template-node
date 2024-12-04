@@ -6,18 +6,14 @@ export const fetchProducts = async (session, afterCursor = null) => {
 
   // GraphQL 查询语句，支持分页
   const query = `
-    query GetProducts($first: Int, $after: String) {
-      products(first: $first, after: $after) {
+    query GetProducts($first: Int) {
+      products(first: $first) {
         edges {
           node {
             id
             title
             handle
           }
-          cursor
-        }
-        pageInfo {
-          hasNextPage
         }
       }
     }
@@ -29,8 +25,7 @@ export const fetchProducts = async (session, afterCursor = null) => {
       data: {
         query,
         variables: {
-          first: 10, // 每次获取 10 个产品
-          after: afterCursor, // 分页游标（可以为空）
+          first: 10
         },
       },
     });
