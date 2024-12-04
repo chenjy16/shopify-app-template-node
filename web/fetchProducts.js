@@ -1,9 +1,9 @@
 import { GraphqlQueryError } from "@shopify/shopify-api";
 import shopify from "./shopify.js";
 
-// GraphQL 查询语句
+// 修改后的 GraphQL 查询语句，不传递任何查询条件
 const ProductQuery = `
-  query GetProducts() {
+  query GetProducts {
     products(first: 10) {
       edges {
         node {
@@ -18,10 +18,9 @@ const ProductQuery = `
 export const fetchProducts = async (session, query = "") => {
   const client = new shopify.api.clients.Graphql({ session });
 
-  // 如果 query 为空字符串，设置一个默认的查询条件（例如空格）
-  const queryString = query.trim() === "" ? "" : query;
 
   try {
+    // 直接请求查询所有产品，不传递任何查询条件
     const response = await client.request(ProductQuery);
 
     // 检查 response 是否存在以及是否有 products.edges
