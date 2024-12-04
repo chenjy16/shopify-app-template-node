@@ -9,6 +9,7 @@ import productCreator from "./product-creator.js";
 import orderCreator from "./order-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
 import {containsAppBlock} from "./frontend/utils/utilities.js";
+import fetchProductById from "./fetchProductById.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -70,6 +71,43 @@ app.post("/api/products", async (_req, res) => {
   }
   res.status(status).send({ success: status === 200, error });
 });
+
+
+app.post("/api/product/:productId", async (req, res) => {
+  const { productId } = req.params; // 从 URL 参数中获取产品 ID
+  const session = req.session; // 假设 session 存储了 Shopify session 信息
+
+  try {
+    // 调用 fetchProductById 函数获取产品信息
+    const product = await fetchProductById(productId, session);
+
+    // 返回成功的响应
+    res.status(200).json({ success: true, product });
+  } catch (error) {
+    // 返回错误响应
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post("/api/productlist", async (req, res) => {
+  const { query = "" } = req.body;
+  const session = req.session; // 获取 session 对象
+
+  try {
+    // 调用 fetchProducts 函数获取产品数据
+    const products = await fetchProducts(session, query);
+
+    // 返回成功的响应
+    res.status(200).json({ success: true, products });
+  } catch (error) {
+    // 返回错误响应
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
+
+
 
 
 app.get("/api/orders/count", async (_req, res) => {
