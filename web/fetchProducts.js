@@ -18,10 +18,6 @@ const ProductQuery = `
               node {
                 id
                 title
-                priceV2 {
-                  amount
-                  currencyCode
-                }
               }
             }
           }
@@ -39,9 +35,6 @@ export const fetchProducts = async (session, query = "") => {
     const products = response.products.edges.map(({ node }) => ({
       id: node.id,
       title: node.title,
-      description: node.description,
-      featuredImage: node.featuredImage,
-      variants: node.variants.edges.map((edge) => edge.node),
     }));
 
     return products;
