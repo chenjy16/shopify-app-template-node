@@ -76,7 +76,7 @@ app.post("/api/products", async (_req, res) => {
 
 app.post("/api/product/:productId", async (req, res) => {
   const { productId } = req.params; // 从 URL 参数中获取产品 ID
-  const session = req.session; // 假设 session 存储了 Shopify session 信息
+  const session = res.locals.shopify.session; // 假设 session 存储了 Shopify session 信息
 
   try {
     // 调用 fetchProductById 函数获取产品信息
@@ -92,7 +92,7 @@ app.post("/api/product/:productId", async (req, res) => {
 
 app.post("/api/productlist", async (req, res) => {
   const { query = "" } = req.body;
-  const session = req.session; // 获取 session 对象
+  const session = res.locals.shopify.session; // 获取 session 对象
 
   try {
     // 调用 fetchProducts 函数获取产品数据ß
